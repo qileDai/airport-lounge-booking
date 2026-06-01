@@ -19,7 +19,7 @@ router.get('/category/:category', asyncHandler(async (req: Request, res: Respons
 router.get('/:id', asyncHandler(async (req: Request, res: Response) => {
   const rule = await repository.findById(req.params.id);
   if (!rule) throw new Error('规则配置不存在');
-  res.json(successResponse(rule);
+  res.json(successResponse(rule));
 }));
 
 router.post('/', asyncHandler(async (req: Request, res: Response) => {

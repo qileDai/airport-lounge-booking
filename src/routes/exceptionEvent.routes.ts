@@ -24,7 +24,7 @@ router.get('/open', asyncHandler(async (req: Request, res: Response) => {
 router.get('/:id', asyncHandler(async (req: Request, res: Response) => {
   const exception = await repository.findById(req.params.id);
   if (!exception) throw new Error('异常事件不存在');
-  res.json(successResponse(exception);
+  res.json(successResponse(exception));
 }));
 
 router.post('/', asyncHandler(async (req: Request, res: Response) => {
