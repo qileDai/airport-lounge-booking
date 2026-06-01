@@ -1,0 +1,40 @@
+NOTICE
+
+Copyright (c) 2024 Airport Lounge Booking Rights Verification & Calculation Service
+
+This project contains software components with the following licenses:
+
+1. Main Application Code
+   License: MIT License
+   Copyright: 2024 Airport Lounge Booking Rights Verification & Calculation Service
+
+2. Dependencies
+   - Express (MIT License)
+   - sql.js (MIT License)
+   - uuid (MIT License)
+   - cors (MIT License)
+   - helmet (MIT License)
+   - morgan (MIT License)
+   
+3. Development Dependencies
+   - TypeScript (Apache License 2.0)
+   - Jest (MIT License)
+   - ts-node (MIT License)
+   - And other development tools
+
+For detailed license information, please refer to the LICENSE file and the respective
+package documentation.
+
+---
+
+项目声明：
+
+本项目《机场贵宾厅预约权益核验规则计算 API 服务》是一个面向航空业贵宾厅服务的
+业务支撑系统，旨在为权益运营、机场服务台、客服支持人员提供专业的权益核验、
+候补管理和数据分析能力。
+
+本项目遵循 MIT 许可证发布，可用于学习和商业用途。
+
+技术栈：Node.js + Express + TypeScript + SQLite
+版本：v1.0.0
+发布日期：2024年

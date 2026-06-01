@@ -1,0 +1,333 @@
+### 机场贵宾厅预约权益核验规则计算 API 服务
+### 基础地址: http://localhost:3000/api
+
+### 健康检查
+GET http://localhost:3000/api/health
+
+### ========== 会员权益 CRUD ==========
+
+### 获取所有会员权益
+GET http://localhost:3000/api/member-benefits
+
+### 获取单个会员权益
+GET http://localhost:3000/api/member-benefits/1
+
+### 创建会员权益
+POST http://localhost:3000/api/member-benefits
+Content-Type: application/json
+X-Operator: 张伟
+
+{
+  "code": "VIP-TEST-001",
+  "name": "测试机场贵宾厅年度权益-钻石卡",
+  "status": "draft",
+  "responsible_person": "张伟",
+  "member_level": "diamond",
+  "remaining_quota": 10,
+  "total_quota": 12,
+  "effective_date": "2025-01-01",
+  "expiry_date": "2025-12-31",
+  "batch_no": "BATCH-2025-TEST",
+  "remark": "测试创建"
+}
+
+### 更新会员权益
+PUT http://localhost:3000/api/member-benefits/1
+Content-Type: application/json
+X-Operator: 张伟
+
+{
+  "remaining_quota": 7,
+  "remark": "更新剩余额度"
+}
+
+### 删除会员权益
+DELETE http://localhost:3000/api/member-benefits/1
+X-Operator: 张伟
+
+### ========== 预约记录 CRUD ==========
+
+### 获取所有预约记录
+GET http://localhost:3000/api/reservations
+
+### 获取单个预约记录
+GET http://localhost:3000/api/reservations/1
+
+### 创建预约记录
+POST http://localhost:3000/api/reservations
+Content-Type: application/json
+X-Operator: 李娜
+
+{
+  "code": "RSV-TEST-001",
+  "name": "测试机场贵宾厅预约-XX0001",
+  "status": "draft",
+  "responsible_person": "李娜",
+  "member_benefit_id": 1,
+  "flight_slot_id": 1,
+  "companion_count": 1,
+  "batch_no": "BATCH-2025-TEST",
+  "remark": "测试预约"
+}
+
+### 更新预约记录
+PUT http://localhost:3000/api/reservations/1
+Content-Type: application/json
+X-Operator: 李娜
+
+{
+  "companion_count": 2,
+  "remark": "增加同行人"
+}
+
+### 删除预约记录
+DELETE http://localhost:3000/api/reservations/2
+X-Operator: 李娜
+
+### ========== 预约记录批量导入预检 ==========
+
+### 批量导入预约记录
+POST http://localhost:3000/api/reservations/batch-import
+Content-Type: application/json
+X-Operator: 批量导入员
+
+{
+  "items": [
+    {
+      "code": "RSV-BATCH-001",
+      "name": "批量导入预约-首都机场CA1234",
+      "responsible_person": "张伟",
+      "member_benefit_id": 1,
+      "flight_slot_id": 1,
+      "companion_count": 0,
+      "batch_no": "BATCH-IMPORT-001",
+      "remark": "批量导入测试"
+    },
+    {
+      "code": "RSV-BATCH-002",
+      "name": "批量导入预约-浦东机场MU5678",
+      "responsible_person": "李娜",
+      "member_benefit_id": 2,
+      "flight_slot_id": 2,
+      "companion_count": 1,
+      "batch_no": "BATCH-IMPORT-001",
+      "remark": "批量导入测试"
+    },
+    {
+      "code": "RSV-BATCH-INVALID",
+      "name": "",
+      "responsible_person": "",
+      "member_benefit_id": 999,
+      "flight_slot_id": 999,
+      "remark": "这条应该校验失败"
+    }
+  ]
+}
+
+### ========== 航班时段 CRUD ==========
+
+### 获取所有航班时段
+GET http://localhost:3000/api/flight-slots
+
+### 获取活跃航班时段
+GET http://localhost:3000/api/flight-slots/active
+
+### 获取已归档航班时段
+GET http://localhost:3000/api/flight-slots/archived
+
+### 获取单个航班时段
+GET http://localhost:3000/api/flight-slots/1
+
+### 创建航班时段
+POST http://localhost:3000/api/flight-slots
+Content-Type: application/json
+X-Operator: 赵敏
+
+{
+  "code": "FLT-TEST-001",
+  "name": "测试航班时段-XX0001",
+  "status": "draft",
+  "responsible_person": "赵敏",
+  "airport_code": "CTU",
+  "flight_number": "XX0001",
+  "departure_time": "2026-05-25T10:00:00",
+  "arrival_time": "2026-05-25T13:00:00",
+  "capacity": 20,
+  "used_count": 0,
+  "is_archived": 0,
+  "snapshot_data": null,
+  "batch_no": "BATCH-2025-TEST",
+  "remark": "测试航班时段"
+}
+
+### 归档航班时段
+POST http://localhost:3000/api/flight-slots/1/archive
+Content-Type: application/json
+X-Operator: 赵敏
+
+### 创建航班时段快照
+POST http://localhost:3000/api/flight-slots/1/snapshot
+Content-Type: application/json
+X-Operator: 赵敏
+
+### ========== 核验权益资格 ==========
+
+### 核验预约的权益资格
+POST http://localhost:3000/api/verifications
+Content-Type: application/json
+X-Operator: 核验员
+
+{
+  "reservation_id": 1
+}
+
+### 获取所有核验结果
+GET http://localhost:3000/api/verifications
+
+### 获取单个核验结果
+GET http://localhost:3000/api/verifications/1
+
+### ========== 候补名单 ==========
+
+### 获取所有候补名单
+GET http://localhost:3000/api/waitlists
+
+### 创建候补名单条目
+POST http://localhost:3000/api/waitlists
+Content-Type: application/json
+X-Operator: 孙丽
+
+{
+  "code": "WTL-TEST-001",
+  "name": "测试候补条目",
+  "status": "waiting",
+  "responsible_person": "孙丽",
+  "member_benefit_id": 1,
+  "flight_slot_id": 1,
+  "wait_start_time": "2026-05-24T20:00:00",
+  "priority_score": 75.0,
+  "batch_no": "BATCH-2025-TEST",
+  "remark": "测试候补"
+}
+
+### 安排候补入场
+POST http://localhost:3000/api/waitlists/arrange
+Content-Type: application/json
+X-Operator: 候补管理员
+
+{
+  "flight_slot_id": 1
+}
+
+### 获取航班时段的候补等待列表
+GET http://localhost:3000/api/waitlists/flight-slot/1
+
+### ========== 入场优先级计算 ==========
+
+### 计算会员在指定航班的入场优先级
+POST http://localhost:3000/api/priority/calculate
+Content-Type: application/json
+X-Operator: 优先级计算员
+
+{
+  "member_benefit_id": 1,
+  "flight_slot_id": 1
+}
+
+### 直接计算优先级（不关联数据库实体）
+POST http://localhost:3000/api/priority/calculate-raw
+Content-Type: application/json
+
+{
+  "member_level": "diamond",
+  "remaining_quota": 8,
+  "total_quota": 12,
+  "departure_time": "2026-05-25T08:00:00",
+  "wait_start_time": "2026-05-24T20:00:00"
+}
+
+### 重新计算航班时段所有候补的优先级
+POST http://localhost:3000/api/priority/recalculate/1
+X-Operator: 优先级计算员
+
+### ========== 权益过期异常判定 ==========
+
+### 检查过期权益并生成异常事件
+POST http://localhost:3000/api/exceptions/check
+X-Operator: 异常检查员
+
+### 获取所有异常事件
+GET http://localhost:3000/api/exceptions
+
+### 获取待处理异常事件
+GET http://localhost:3000/api/exceptions/pending
+
+### 获取单个异常事件
+GET http://localhost:3000/api/exceptions/1
+
+### 处理异常事件
+POST http://localhost:3000/api/exceptions/1/handle
+Content-Type: application/json
+X-Operator: 处理员A
+
+{
+  "handler": "处理员A",
+  "action": "handling"
+}
+
+### ========== 统计聚合 ==========
+
+### 权益核验通过率统计（按日）
+GET http://localhost:3000/api/statistics/verification-rate?group_by=day
+
+### 权益核验通过率统计（按批次）
+GET http://localhost:3000/api/statistics/verification-rate?group_by=batch
+
+### 权益核验通过率统计（按责任人）
+GET http://localhost:3000/api/statistics/verification-rate?group_by=responsible_person
+
+### 候补转入率统计
+GET http://localhost:3000/api/statistics/waitlist-transfer-rate?group_by=day
+
+### 入场使用率统计
+GET http://localhost:3000/api/statistics/usage-rate?group_by=day
+
+### ========== 状态流转 ==========
+
+### 执行状态流转
+POST http://localhost:3000/api/status-flow
+Content-Type: application/json
+X-Operator: 流转操作员
+
+{
+  "entity_type": "member_benefit",
+  "entity_id": 5,
+  "from_status": "draft",
+  "to_status": "pending_review",
+  "action": "submit",
+  "responsible_person": "陈静",
+  "reject_reason": null,
+  "batch_no": "BATCH-2025-SZX"
+}
+
+### 查询状态流转记录
+GET http://localhost:3000/api/status-flow?entity_type=member_benefit&entity_id=1
+
+### 获取允许的状态流转
+GET http://localhost:3000/api/status-flow/allowed-transitions?current_status=draft
+
+### ========== 审计日志 ==========
+
+### 查询审计日志（分页）
+GET http://localhost:3000/api/audit-logs?limit=20&offset=0
+
+### 按实体类型查询审计日志
+GET http://localhost:3000/api/audit-logs?entity_type=member_benefit
+
+### 按操作人查询审计日志
+GET http://localhost:3000/api/audit-logs?operator=张伟
+
+### ========== Seed 重置 ==========
+
+### 重置数据库并重新导入 seed 数据
+POST http://localhost:3000/api/seed/reset

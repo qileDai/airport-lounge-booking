@@ -1,0 +1,264 @@
+@name=机场贵宾厅预约权益核验API服务 - 接口测试
+
+### 健康检查
+# 检查API服务是否正常运行
+GET http://localhost:3000/api/health
+
+### 获取API信息
+# 查看所有可用端点
+GET http://localhost:3000/api
+
+##############################################
+# 1. 会员权益 CRUD API
+##############################################
+
+### 获取所有会员权益（分页）
+GET http://localhost:3000/api/member-rights?page=1&limit=10
+
+### 根据ID获取会员权益详情
+GET http://localhost:3000/api/member-rights/{{member_id}}
+
+### 创建新会员权益
+POST http://localhost:3000/api/member-rights
+Content-Type: application/json
+
+{
+  "code": "MR-2024-TST-001",
+  "name": "测试贵宾厅权益",
+  "member_level": "platinum",
+  "valid_from": "2024-06-01",
+  "valid_to": "2025-05-31",
+  "total_quota": 12,
+  "remaining_quota": 12,
+  "owner_name": "测试管理员",
+  "batch_id": "BATCH-TEST-001",
+  "remark": "测试用权益"
+}
+
+### 更新会员权益
+PUT http://localhost:3000/api/member-rights/{{member_id}}
+Content-Type: application/json
+
+{
+  "remaining_quota": 10,
+  "remark": "已使用2次"
+}
+
+### 删除会员权益
+DELETE http://localhost:3000/api/member-rights/{{member_id}}
+
+### 按状态查询会员权益
+GET http://localhost:3000/api/member-rights/status/active
+
+### 按等级查询会员权益
+GET http://localhost:3000/api/member-rights/level/platinum
+
+### 检查会员权益过期情况
+GET http://localhost:3000/api/member-rights/{{member_id}}/expiry-check
+
+##############################################
+# 2. 预约记录批量导入预检 API
+##############################################
+
+### 获取所有预约记录
+GET http://localhost:3000/api/booking-records?page=1&limit=10
+
+### 批量导入预检（检测错误和警告）
+POST http://localhost:3000/api/booking-records/batch-import/precheck
+Content-Type: application/json
+
+{
+  "records": [
+    {
+      "code": "BK-BATCH-001",
+      "name": "张三预约",
+      "flight_number": "CA1234",
+      "flight_date": "2024-12-20T08:30:00Z",
+      "companion_count": 2
+    },
+    {
+      "code": "BK-BATCH-002",
+      "name": "李四预约",
+      "flight_number": "MU5678"
+    }
+  ]
+}
+
+### 创建预约记录
+POST http://localhost:3000/api/booking-records
+Content-Type: application/json
+
+{
+  "code": "BK-SINGLE-001",
+  "name": "王五预约记录",
+  "flight_number": "CZ9012",
+  "flight_date": "2024-12-22T14:15:00Z",
+  "lounge_id": "LOUNGE-CAN-T1-01",
+  "companion_count": 1
+}
+
+### 核验预约资格
+GET http://localhost:3000/api/booking-records/{{booking_id}}/eligibility-verify
+
+##############################################
+# 3. 航班时段归档与快照 API
+##############################################
+
+### 获取所有航班时段
+GET http://localhost:3000/api/flight-periods?page=1&limit=10
+
+### 归档过期航班时段
+POST http://localhost:3000/api/flight-periods/archive/expired
+Content-Type: application/json
+
+{
+  "beforeDate": "2024-01-01T00:00:00Z"
+}
+
+### 创建航班时段快照
+GET http://localhost:3000/api/flight-periods/{{period_id}}/snapshot
+
+### 获取利用率报告
+GET http://localhost:3000/api/flight-periods/reports/utilization?startDate=2024-01-01&endDate=2024-12-31
+
+##############################################
+# 4. 候补名单与入场优先级计算 API
+##############################################
+
+### 获取候补名单
+GET http://localhost:3000/api/waiting-list?status=waiting&page=1&limit=10
+
+### 加入候补名单
+POST http://localhost:3000/api/waiting-list
+Content-Type: application/json
+
+{
+  "code": "WL-NEW-001",
+  "name": "吴九候补申请",
+  "member_id": "{{member_id}}",
+  "owner_name": "候补管理员",
+  "remark": "申请加入候补"
+}
+
+### 计算单个会员入场优先级
+POST http://localhost:3000/api/waiting-list/priority/calculate/{{member_id}}
+Content-Type: application/json
+
+{
+  "flight_period_id": "{{period_id}}"
+}
+
+### 批量计算所有候补优先级并排序
+POST http://localhost:3000/api/waiting-list/priority/calculate-all
+
+### 处理候补入场（按优先级）
+POST http://localhost:3000/api/waiting-list/admission/process
+Content-Type: application/json
+
+{
+  "flightPeriodId": "{{period_id}}",
+  "availableSlots": 3
+}
+
+### 自动通知高优先级用户入场
+POST http://localhost:3000/api/waiting-list/admission/auto-admit
+Content-Type: application/json
+
+{
+  "count": 2
+}
+
+### 查询候补排队位置
+GET http://localhost:3000/api/waiting-list/member/{{member_id}}/position
+
+##############################################
+# 5. 异常判定与处理 API
+##############################################
+
+### 获取所有异常事件
+GET http://localhost:3000/api/exception-events?page=1&limit=10
+
+### 获取未处理的异常
+GET http://localhost:3000/api/exception-events/open
+
+### 检测指定会员的异常
+POST http://localhost:3000/api/exception-events/check/member/{{member_id}}
+
+### 批量检测所有活跃会员的过期异常
+POST http://localhost:3000/api/exception-events/check/batch-expiry
+
+### 获取异常统计摘要
+GET http://localhost:3000/api/exception-events/statistics/summary
+
+##############################################
+# 6. 状态流转与审计日志 API
+##############################################
+
+### 创建状态流转（确认预约）
+POST http://localhost:3000/api/status-transitions
+Content-Type: application/json
+
+{
+  "entity_type": "booking_record",
+  "entity_id": "{{booking_id}}",
+  "from_status": "draft",
+  "to_status": "pending_review",
+  "action": "submit_for_review",
+  "operator_name": "客服A",
+  "reason": "提交复核"
+}
+
+### 创建状态流转（驳回操作）
+POST http://localhost:3000/api/status-transitions
+Content-Type: application/json
+
+{
+  "entity_type": "booking_record",
+  "entity_id": "{{booking_id}}",
+  "from_status": "pending_review",
+  "to_status": "rejected",
+  "action": "reject_booking",
+  "operator_name": "审核员B",
+  "reason": "缺少必要信息，请补充后重新提交"
+}
+
+### 查询审计日志
+GET http://localhost:3000/api/status-transitions/audit-log?entityType=booking_record&page=1&limit=50
+
+### 查看实体状态变更历史
+GET http://localhost:3000/api/status-transitions/history/booking_record/{{booking_id}}
+
+### 查询允许的状态转换
+GET http://localhost:3000/api/status-transitions/allowed-transitions/booking_record/pending_review
+
+##############################################
+# 7. 统计聚合 API
+##############################################
+
+### 获取核验通过率统计
+GET http://localhost:3000/api/statistics/verification?startDate=2024-01-01&endDate=2024-12-31
+
+### 获取使用率统计
+GET http://localhost:3000/api/statistics/usage-rate
+
+### 获取每日汇总统计
+GET http://localhost:3000/api/statistics/daily/2024-01-20
+
+##############################################
+# 8. 其他实体 CRUD
+##############################################
+
+### 获取同行人列表
+GET http://localhost:3000/api/companions?booking_id={{booking_id}}
+
+### 获取使用凭证列表
+GET http://localhost:3000/api/usage-vouchers?booking_id={{booking_id}}
+
+### 获取核验结果列表
+GET http://localhost:3000/api/verification-results?member_id={{member_id}}
+
+### 获取规则配置列表
+GET http://localhost:3000/api/rule-configs?activeOnly=true
+
+### 获取核验结果统计
+GET http://localhost:3000/api/verification-results/statistics/summary
